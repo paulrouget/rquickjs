@@ -330,6 +330,14 @@ impl<'js> Value<'js> {
         self
     }
 
+    pub fn get_array_buffer(&self) -> &[u8] {
+        let mut len: u64 = 0;
+        unsafe {
+            let ptr = qjs::JS_GetArrayBuffer(self.ctx.ctx, &mut len as *mut u64, self.value);
+            core::slice::from_raw_parts(ptr as _, len as _)
+        }
+    }
+
     /// Convert from value to specified type
     pub fn get<T: FromJs<'js>>(&self) -> Result<T> {
         T::from_js(self.ctx, self.clone())
